@@ -1,45 +1,20 @@
-name: Build Android APK
+name: sual_wa_maalouma
+description: "سؤال ومعلومة - تطبيق أسئلة ومعلومات تفاعلي."
+publish_to: 'none'
 
-on:
-  push:
-    branches: [ main ]
-  workflow_dispatch:
+version: 1.0.0+1
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
+environment:
+  sdk: '>=3.4.0 <4.0.0'
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+dependencies:
+  flutter:
+    sdk: flutter
 
-      - name: Setup Java 17
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '17'
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
 
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: '3.24.0'
-          channel: 'stable'
-
-      - name: Create Android project files cleanly
-        run: |
-          rm -rf android_temp
-          flutter create --platforms=android --project-name sual_wa_maalouma --org com.hakim.sualwamaalouma android_temp
-          cp -r android_temp/android .
-          rm -rf android_temp
-
-      - name: Get dependencies
-        run: flutter pub get
-
-      - name: Build APK
-        run: flutter build apk --release
-
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: sual-wa-maalouma-apk
-          path: build/app/outputs/flutter-apk/app-release.apk
+flutter:
+  uses-material-design: true
