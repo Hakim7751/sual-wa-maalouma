@@ -19,8 +19,12 @@ jobs:
           flutter-version: '3.24.0'
           channel: 'stable'
 
-      - name: Prepare Android project files
-        run: flutter create . --platforms=android
+      - name: Create Android project files cleanly
+        run: |
+          rm -rf android_temp
+          flutter create --platforms=android --project-name sual_wa_maalouma --org com.hakim.sualwamaalouma android_temp
+          cp -r android_temp/android .
+          rm -rf android_temp
 
       - name: Get dependencies
         run: flutter pub get
