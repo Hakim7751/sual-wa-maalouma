@@ -1,14 +1,45 @@
-name: sual_wa_maalouma
-description: لعبة سؤال ومعلومة - تحدي الـ 1500 سؤال
-publish_to: 'none'
-version: 1.0.0+1
+name: Build Android APK
 
-environment:
-  sdk: '>=3.0.0 <4.0.0'
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
 
-dependencies:
-  flutter:
-    sdk: flutter
+jobs:
+  build:
+    runs-on: ubuntu-latest
 
-flutter:
-  uses-material-design: true
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.0'
+          channel: 'stable'
+
+      - name: Create Android project files cleanly
+        run: |
+          rm -rf android_temp
+          flutter create --platforms=android --project-name sual_wa_maalouma --org com.hakim.sualwamaalouma android_temp
+          cp -r android_temp/android .
+          rm -rf android_temp
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Build APK
+        run: flutter build apk --release
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: sual-wa-maalouma-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
